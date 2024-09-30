@@ -1,17 +1,22 @@
-
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
 
-app.use((req,res,next)=>{
-    console.log('this is middlware 1');
-    next();
-})
+app.use(bodyParser.urlencoded({extended:false}));
 
-app.use((req,res,next)=>{
-    console.log('this is middlware 2');
-   return res.end('<h1>Hello From Express.Js</h1>');
-})
+app.use('/add-product',(req,res,next)=>{
+    res.send('<form action="/product" method="post"><label for="name"></label><input type="text" name="product_name" id="product_name" placeholder="product name"><input type="number" name="size" id="size" placeholder="what is the size of product?"><button type="submit">Submit</button></form>')
+ });
 
-app.listen(3000,()=>{
-    console.log('server is running on port 3000');    
-})
+ app.post('/product',(req,res,next)=>{
+    console.log(req.body);
+    res.redirect('/');   
+ });
+ 
+ app.use('/',(req,res,next)=>{
+    res.send('<h1>Hello From express</h1>');
+ });
+ 
+app.listen(3000, () => {
+    console.log('server is running on port 3000');
+});
