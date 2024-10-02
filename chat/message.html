@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBox</title>
+</head>
+<body>
+    <form action="/" method="post" style="margin: 20px;">
+        <input type="text" name="message" id="message" placeholder="type message here">
+        <input type="hidden" name="username" id="username">
+        <br>
+        <button type="submit" style="margin-top: 5px;">Send</button>
+    </form>
+</body>
+<script>
+    document.getElementById('username').value = localStorage.getItem('username');
+</script>
+</html>
