@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <link rel="stylesheet" href="/contactus.css">
+</head>
+
+<body>
+    <header class="main-header">
+        <nav class="main-header_nav">
+            <div class="sharpener">
+                <h1>Sharpener</h1>
+            </div>
+            <ul class="main-header_item-list">
+                <li class="main-header_item"><a href="http://localhost:3000/" target="_self">Home</a></li>
+                <li class="main-header_item"><a class="active" href="http://localhost:3000/admin/add-product" target="_self">Courses</a></li>
+                <li class="main-header_item"><a class="active" href="http://localhost:3000/admin/add-product" target="_self">Hire With US</a></li>
+                <li class="main-header_item"><a class="active" href="http://localhost:3000/admin/add-product" target="_self"> Pricing </a></li>
+                <li class="main-header_item"><a href="http://localhost:3000/contactus" target="_self">Register Now</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="main-div">
+            <div class="head-div">
+                <h3 style="color: #550a14;">Book a call</h3>
+                <p>Book a call slot and our representative will call you within 1hr of selected time.</p>
+                <hr>
+            </div>
+        <form action="/contactus" method="post">
+            <div>
+                <label for="name">Name:</label>
+                <br>
+                <input type="text" id="name" name="name" placeholder="your name">
+                <br><br>
+                <label for="email">Email:</label>
+                <br>
+                <input type="email" id="email" name="email" placeholder="Email ID">
+                <br><br>
+                <label for="phone">Phone:</label>
+                <br>
+                <input type="tel" id="phone" name="phone" placeholder="Phone Number">
+                <br><br>
+            </div>
+            <button type="submit">GET A CALL</button>
+        </form>
+    </div>
+
+    </main>
+</body>
+</html>
