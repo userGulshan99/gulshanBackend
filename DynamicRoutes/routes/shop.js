@@ -13,7 +13,11 @@ router.get('/products', shopController.getProducts);
 // added dynamic route
 router.get('/products/:productId',shopController.getProductWithId);
 
+// see cart items
 router.get('/cart', shopController.getCart);
+
+// add items to cart
+router.post('/cart', shopController.postCart);
 
 router.get('/orders', shopController.getOrders);
 

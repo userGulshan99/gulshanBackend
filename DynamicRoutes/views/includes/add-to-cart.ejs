@@ -1,0 +1,14 @@
+
+<!-- page for request body for adding product to cart -->
+
+<div class="card__actions">
+    <form action="/cart" method="POST">
+        
+        <a href="/products/<%= product.id %>" class="btn">Details</a>
+        <input type="hidden" name="id" value="<%= product.id %>">
+        <input type="hidden" name="title" value="<%= product.title %>">
+        <input type="hidden" name="price" value="<%= product.price %>">
+        <input type="hidden" name="imageUrl" value="<%= product.imageUrl %>">
+        <button class="btn">Add to Cart</button>
+    </form>
+</div>

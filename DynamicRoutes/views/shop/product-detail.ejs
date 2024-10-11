@@ -11,8 +11,9 @@
             </div>
             <h2>Price: <%= product.price %></h2>
             <p><%= product.description %></p>
-            <form action="/cart" method="post">
-                <button class="btn" type="submit">Add to Cart</button>
-            </form>
+
+            <!-- add-to-cart page is created and included here -->
+            <%- include('../includes/add-to-cart.ejs') %>
+            
         </main>
-        <%- include('../includes/end.ejs') %>
+        <%- include('../includes/end.ejs') %>   

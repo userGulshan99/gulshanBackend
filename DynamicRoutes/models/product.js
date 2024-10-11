@@ -7,7 +7,7 @@ const p = path.join(
   'products.json'
 );
 
-const getProductsFromFile = cb => {
+const getProductsFromFile = cb => { 
   fs.readFile(p, (err, fileContent) => {
     if (err ) {
       cb([]);
@@ -19,7 +19,8 @@ const getProductsFromFile = cb => {
 };
 
 module.exports = class Product {
-  constructor(title, imageUrl, description, price) {
+  constructor(id,title, imageUrl, description, price) {
+    this.id = id;
     this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;
@@ -28,8 +29,11 @@ module.exports = class Product {
 
   save() {
     getProductsFromFile(products => {
-      this.id = (products.length || 0) + 1;
+      if(this.id == undefined){
+        this.id = ((products.length || 0) + 1).toString();
+      }
       products.push(this);
+      products.sort((a,b)=>Number(a.id) - Number(b.id));
       fs.writeFile(p, JSON.stringify(products), err => {
         console.log(err);
       });
@@ -44,6 +48,14 @@ module.exports = class Product {
    return getProductsFromFile((products)=>{
      const product = products.find((ele)=> ele.id == id);      
       cb(product);
+    })
+  }
+ 
+  static deleteById(id){
+    getProductsFromFile((products)=>{
+      products = products.filter((prod)=>prod.id != id);
+      
+      fs.writeFile(p, JSON.stringify(products), err => {return});
     })
   }
 
