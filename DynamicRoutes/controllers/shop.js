@@ -58,6 +58,12 @@ exports.postCart = (req,res,next)=>{
     res.redirect('/cart');
 }
 
+// delete the non required product from cart 
+exports.deletCartItem = (req,res,next)=>{
+  Cart.deleteItem(req.params.id);
+  res.redirect('/cart');
+}
+
 exports.getOrders = (req, res, next) => {
   res.render('shop/orders', {
     path: '/orders',

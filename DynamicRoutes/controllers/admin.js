@@ -1,5 +1,6 @@
 const Product = require('../models/product');
 
+// display form to add products
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/add-product', {
     pageTitle: 'Add Product',
@@ -10,7 +11,7 @@ exports.getAddProduct = (req, res, next) => {
   });
 };
 
-
+// save product in file after adding or editing
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
   const imageUrl = req.body.imageUrl;
@@ -18,9 +19,11 @@ exports.postAddProduct = (req, res, next) => {
   const description = req.body.description;
   const product = new Product(req.body.id,title, imageUrl, description, price);
   product.save();
-  res.redirect('/products');
+  res.redirect('/admin/products');
 };
 
+
+// get a list of products added by admin
 exports.getProducts = (req, res, next) => {
   Product.fetchAll(products => {
     res.render('admin/products', {
@@ -31,7 +34,7 @@ exports.getProducts = (req, res, next) => {
   });
 };
 
-
+// edit the product
 exports.editProduct = (req,res,next) =>{
   Product.fetchAll((prod)=>{
     let arr = prod.filter((a)=>a.id == req.params.id);
@@ -46,6 +49,11 @@ exports.editProduct = (req,res,next) =>{
         
     })
 
+  }
 
 
-}
+  // delete the added product
+    exports.deleteproductbyID = (req,res,next) =>{
+          Product.deleteById(req.params.id);
+          res.redirect('/admin/products');
+    }

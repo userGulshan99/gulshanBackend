@@ -19,8 +19,13 @@ router.get('/cart', shopController.getCart);
 // add items to cart
 router.post('/cart', shopController.postCart);
 
+// method to delete cart item
+router.get('/deleteCart/:id', shopController.deletCartItem);
+
 router.get('/orders', shopController.getOrders);
 
 router.get('/checkout', shopController.getCheckout);
+
+
 
 module.exports = router;

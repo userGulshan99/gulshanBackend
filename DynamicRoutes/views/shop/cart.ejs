@@ -30,8 +30,16 @@
                                        <br>
                                        Quantity : <%= product.qty %>
                                     </h2>
+                                    
                                 </div>
-                                
+                                <form action="/deleteCart/<%= product.id %>" style="margin-left: 110px;">
+                                    <button type="submit" class="btn" >DELETE</button>
+                                </form>
+
+
+                                <!-- <div style="text-align: center;text-decoration: none;" class="btn">
+                                    <a href="/deleteCart/<%= product.id %>">DELETE</a>
+                                </div> -->
                             </article>
                         </li>
                             <% } %>

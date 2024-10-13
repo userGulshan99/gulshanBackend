@@ -32,8 +32,6 @@ module.exports = class Cart{
 
     // method to add new product in cart
     static addToCart(product){
-      console.log(product);
-      return;
           product = {
             id:product.id,
             title:product.title,
@@ -74,5 +72,19 @@ module.exports = class Cart{
           
         }
 
-    
+    // delete cart item
+    static deleteItem(id){
+      getProductsFromCartFile((data)=>{
+        let prod = data.products;
+        prod = prod.filter((p)=>p.id != id);
+          let price = 0;
+            prod.map((a)=>{
+              price+= Number(a.price) * Number(a.qty);
+            })
+
+            data.products = prod;
+            data.price = price;
+            fs.writeFile(p,JSON.stringify(data),(err)=>{return});
+      });
+    }
 }
