@@ -11,48 +11,58 @@ exports.getAddProduct = (req, res, next) => {
   });
 };
 
-// save product in file after adding or editing
+// save product in database after adding or editing
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
   const product = new Product(req.body.id,title, imageUrl, description, price);
-  product.save();
-  res.redirect('/admin/products');
+  
+  product.save()
+  .then(()=>{
+    res.redirect('/admin/products');
+  })
+  .catch((err)=>console.log(err));
+
 };
 
 
-// get a list of products added by admin
+// get a list of products added by admin in database
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll(products => {
-    res.render('admin/products', {
-      prods: products,
-      pageTitle: 'Admin Products',
-      path: '/admin/products'
+  Product.fetchAll()
+    .then(([rows,fieldData])=>{
+      res.render('admin/products', {
+        prods: rows,
+        pageTitle: 'Admin Products',
+        path: '/admin/products'
+      });
+    })
+    .catch((err)=>{
+      console.log(err);      
     });
-  });
+
 };
 
-// edit the product
+// edit the selected product from database
 exports.editProduct = (req,res,next) =>{
-  Product.fetchAll((prod)=>{
-    let arr = prod.filter((a)=>a.id == req.params.id);
-    
-    Product.deleteById(req.params.id);
-
+  
+  Product.findById(req.params.id).then(([rows,fieldData])=>{
     res.render('admin/edit-product', {
-      product: arr[0] ,
+      product: rows[0],
       pageTitle: 'Admin Products',
       path: '/admin/edit-product'
     });
-        
-    })
+  }).catch((err)=>{
+    console.log(err);    
+  })
 
-  }
+  Product.deleteById(req.params.id);
+  
+}
 
 
-  // delete the added product
+  // Method to delete product by id from data
     exports.deleteproductbyID = (req,res,next) =>{
           Product.deleteById(req.params.id);
           res.redirect('/admin/products');

@@ -1,37 +1,57 @@
 const Product = require('../models/product');
 const Cart = require('../models/cart');
 
+//get all products from database
   exports.getProducts = (req, res, next) => {
-    Product.fetchAll(products => {
+    Product.fetchAll()
+    .then(([rows,fieldData])=>{
       res.render('shop/product-list', {
-        prods: products,
+        prods: rows,
         pageTitle: 'All Products',
         path: '/products'
       });
+
+    })
+    .catch((err)=>{
+      console.log(err);      
     });
+
   };
 
-  // controller for getting product with specific Id
+  // controller for getting product with specific Id from database
+
   exports.getProductWithId = (req,res,next) =>{
     const prodId = req.params.productId;
 
-    Product.findById(prodId, (prod)=>{        
+    Product.findById(prodId).then(([rows,fieldData])=>{
+      const product = rows.find((prod)=>prod.id == prodId);
+      
       res.render('shop/product-detail.ejs',{
-        product:prod,
-        pageTitle:prod.title,
+        product:product,
+        pageTitle:product.title,
         path:'/products'
       });
-    })
+
+    }).catch((err)=>{
+      console.log(err);
+      return;
+    });
   }
 
+  //method to show all products to the index page
   exports.getIndex = (req, res, next) => {
-    Product.fetchAll(products => {
+    Product.fetchAll()
+    .then(([rows,fieldData])=>{
       res.render('shop/index', {
-        prods: products,
+        prods: rows,
         pageTitle: 'Shop',
         path: '/'
       });
+    })
+    .catch((err)=>{
+      console.log(err);      
     });
+
   };
 
 
