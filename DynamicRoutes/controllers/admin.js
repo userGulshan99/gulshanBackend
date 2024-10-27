@@ -19,11 +19,11 @@ exports.postAddProduct = (req, res, next) => {
   const price = req.body.price;
   const description = req.body.description;
   
-  Product.create({
+  req.user.createProduct({
     title : title,
     price : price,
     imageUrl : imageUrl,
-    description : description
+    description : description,
   })
   .then(()=>{
     res.redirect('/admin/products');
@@ -36,7 +36,8 @@ exports.postAddProduct = (req, res, next) => {
 
 // get a list of products added by admin in database
 exports.getProducts = (req, res, next) => {
-  Product.findAll()
+  // get products with relationship method
+  req.user.getProducts()
   .then((products)=>{
     res.render('admin/products', {
             prods: products,
@@ -50,15 +51,13 @@ exports.getProducts = (req, res, next) => {
 }
 
 
-// edit the selected product from database
 exports.editProduct = (req,res,next) =>{
-  
-  Product.findAll({
+  // edit with one to many relationship 
+  req.user.getProducts({
     where: {
       id : req.params.id
     }
   }).then((data)=>{
-    
     res.render('admin/edit-product', {
           product: data[0],
           pageTitle: 'Admin Products',
