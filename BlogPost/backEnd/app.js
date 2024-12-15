@@ -9,9 +9,12 @@ app.use(cors({
     origin : '*'
 }));
 
+
 const Blog = require('./models/blogModel');
 const Comment = require('./models/commentsModel');
 
+
+// post comment on blog
 app.post('/comments/:id',(req, res, next)=>{
     Blog.findByPk(req.params.id).then((user)=>{
         return user.createComment({
@@ -25,7 +28,7 @@ app.post('/comments/:id',(req, res, next)=>{
     })
 });
 
-
+// get all posted comments on selected blog
 app.get('/comments/:id', (req, res, next)=>{
     Comment.findAll({
         where:{
@@ -38,6 +41,7 @@ app.get('/comments/:id', (req, res, next)=>{
     })
 })
 
+// to delete comment on selected blog
 app.delete('/comments/:id', (req, res, next)=>{
     Comment.destroy({
         where :{
@@ -50,6 +54,7 @@ app.delete('/comments/:id', (req, res, next)=>{
 })
 
 
+// get all created blogs
 app.get('/blogs', (req, res, next) =>{
     Blog.findAll().then((result)=>{
         res.send(result)
@@ -58,6 +63,8 @@ app.get('/blogs', (req, res, next) =>{
     })
 })
 
+
+// to create new blog
 app.post('/blogs', (req, res, next)=>{
     Blog.create({
         title : req.body.title,
@@ -69,6 +76,8 @@ app.post('/blogs', (req, res, next)=>{
     })
 })
 
+
+// models association
 Blog.hasMany(Comment);
 Comment.belongsTo(Blog);
 

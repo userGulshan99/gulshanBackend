@@ -16,7 +16,7 @@ const Blog = sequelize.define('blog', {
         type : DataType.STRING
     },
     content : {
-        type : DataType.STRING
+        type : DataType.TEXT
     }
 });
 

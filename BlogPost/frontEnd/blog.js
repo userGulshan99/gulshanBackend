@@ -24,24 +24,28 @@ form.addEventListener('submit', (e) => {
     e.target.content.value = '';
 });
 
+
+// append data on webpage and post in database
 function outputData(data) {
     const outputContent = document.querySelector('.output');
 
     const html = `
-        <div class="card-title" style="display: flex;gap:90%">
-            ${data.title} 
+        <div class="card-title" style="display: flex;">
+            <h2> ${data.title} </h2> 
             <button class="expand">+</button>
             <input type="hidden" id="id" value="${data.id}">
         </div>
+
         <div class="card-content" style="display: none;">
-            <h3>${data.author}</h3>
+            <h3>Author - ${data.author}</h3>
             <p>${data.content}</p>
             <hr>
+
             <strong>Comments:</strong>
             <br><br>
-            <div style="display: flex; width: 100%;">
-                <input type="text" class="comment_input" placeholder="Write a comment here">
-                <button type="button" class="addComment btn">Add Comment</button>
+            <div class="comment_input" style="display: flex; width: 100%;">
+                <input type="text"  placeholder="Write a comment here">
+                <button type="button" class="addComment fa fa-play"></button>
             </div>
             <ul class="comments" style="list-style-type: none; padding: 0;"></ul>
         </div>`;
@@ -49,9 +53,16 @@ function outputData(data) {
     const card = document.createElement('div');
     card.className = 'output-card';
     card.innerHTML = html;
-    card.style.marginBottom = '30px';
     outputContent.appendChild(card);
 
+    toggleCardContent(card)
+
+}
+
+
+// function to show card content
+function toggleCardContent(card){
+    
     const expandButton = card.querySelector('.expand');
     const cardContent = card.querySelector('.card-content');
 
@@ -66,11 +77,14 @@ function outputData(data) {
     });
 
     displayComments(card);
+    
 }
 
+
+// get and update comments from server and display on blog
 function displayComments(card) {
     const addCommentBtn = card.querySelector('.addComment');
-    const commentInput = card.querySelector('.comment_input');
+    const commentInput = card.querySelector('.comment_input').querySelector('input');
     const commentsList = card.querySelector('.comments');
 
     const id = card.querySelector('#id');
@@ -94,8 +108,6 @@ function displayComments(card) {
                 })
             });
 
-            
-            deleteBtn.style.width = '30%'
             li.appendChild(deleteBtn);
 
             commentsList.appendChild(li);
@@ -103,7 +115,6 @@ function displayComments(card) {
     }).catch((err)=>{
         console.log(err);
     })
-
 
     
     addCommentBtn.addEventListener('click', () => {
@@ -113,13 +124,13 @@ function displayComments(card) {
         li.textContent = commentText;
 
         const deleteBtn = document.createElement('button');
+        deleteBtn.classList.add('deleteBtn');
         deleteBtn.textContent = 'Delete';
+    
         deleteBtn.addEventListener('click', () => {
             li.remove();
         });
         
-        
-        deleteBtn.style.width = '30%'
         li.appendChild(deleteBtn);
 
         commentsList.appendChild(li);

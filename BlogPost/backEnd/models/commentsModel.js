@@ -8,7 +8,8 @@ const Comment = sequelize.define('comment', {
         autoIncrement : true,
         allowNull : false,
         primaryKey : true
-    },
+    }, 
+    
     comment: {
         type : DataType.STRING
     }

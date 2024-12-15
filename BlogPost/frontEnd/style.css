@@ -1,12 +1,27 @@
-.main{
-    display:flex;
-    gap: 20px;
-    font-size: large;
+*{
+    margin: 0;
+    padding: 0;
 }
 
-.comment_input{
-    background-color: #e9c8c8;
-    color: rgb(48, 9, 89);
+body{
+    background-color: #212121;
+}
+
+.input{
+    background-color: rgb(14, 109, 128);
+    color: yellow;
+    max-width: 30%;
+    position: absolute;
+    left: 0;
+    top: 20px;
+    display: block;
+}
+
+.output{
+    max-width: 60%;
+    position: absolute;
+    right: 0px;
+    top: 0px;
 }
 
 .input,.output{
@@ -15,15 +30,28 @@
     width: 100%;
 }
 
-.input{
-    background-color: rgb(14, 109, 128);
+.input h1{
+    text-align: center;
+    text-transform: capitalize;
 }
 
-.output-card{
-    background-color: #cc8585;
-    color: rgb(32, 2, 39);
-    font-weight: bold;
-    padding: 10px;
+.input-form label{
+    display: block;
+    margin-bottom: 10px;
+}
+
+.input-form button{
+    margin-top: 10px;
+    font-weight: bolder;
+    background-color: orangered;
+}
+
+.input-form textarea{
+    width: 100%;
+    border-radius: 2px;
+    padding: 2.5px 5px;
+    border: none;
+    outline: none;
 }
 
 input,.btn{
@@ -32,18 +60,76 @@ input,.btn{
     height: 30px;
     border-radius: 2px;
     border: none;
+    outline: none;
+    padding: 0px 5px;
 }
 
-textarea{
-    width: 100%;
-    border-radius: 2px;
+.output-card{
+    background-color: #cc8585;
+    color: darkblue;
+    font-weight: bold;
+    padding: 10px;
+    margin: 0px 15px 20px;
+}
+
+.card-title{
+    justify-content: space-between;
+}
+
+.card-title button{
+    font-weight: bold;
+    padding: 5px;
+    font-size: medium;
     border: none;
+    outline: none;
+    background-color: aqua;
 }
 
-.btn{
-    background-color: chocolate;
+.card-content h3,.card-content p , .card-content hr{
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: black;
+}
+
+.card-content h3{
+    padding: 5px;
+    width: fit-content;
+    background-color: #051f01;
+    color: orangered;
+}
+
+.comment_input{
+    display: flex;
+    justify-content: space-between;
+}
+
+.comment_input input{
+    outline: none;
+    padding: 0px 5px;
+    margin: 0 5px;
+    font-weight: bold;
+}
+
+
+.comment_input button{
+    width: 10%;
+}
+
+ul{
+    color: #313131;
+    margin-top: 20px;
 }
 
 li{
-    color: red;
+    padding: 0px 15px;
+}
+
+li button{
+    color: black;
+    font-weight: bold;
+    max-width: 50px;
+    max-height: 50px;
+    background-color: #ee1f1f;
+    margin: 0px 10px;
 }
