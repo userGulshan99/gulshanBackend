@@ -1,11 +1,14 @@
 const { where } = require('sequelize');
+const bcrypt = require('bcrypt');
 
 const User = require('../models/users.models.js');
 
 const postUser = async (req, res, next) =>{
   try {
-    const { name, email, password } = req.body;
+    let { name, email, password } = req.body;
   
+      password = await encryptPassword(password);
+      
     let user;
     
     user = await User.findOne({
@@ -13,7 +16,7 @@ const postUser = async (req, res, next) =>{
           email:email
       }
     });
-  
+    
     if(user){
       return res.status(400).json({"message" : "user already exists"});
     }
@@ -48,7 +51,9 @@ const getUser = async (req, res, next) =>{
         return res.status(404).json({'message' : 'User Not Found!'});
       }
 
-      if(user.password !== password){
+      const comparedPassword = await decryptPassword(password, user.password);
+
+      if(!comparedPassword){
         return res.status(401).json({'Error' : 'Password does not match'});
       }
 
@@ -60,6 +65,23 @@ const getUser = async (req, res, next) =>{
   
 }
 
+
+async function encryptPassword(password){
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    return  hashedPassword;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+async function decryptPassword(password, hash){
+  try {
+    return await bcrypt.compare(password, hash);
+  } catch (error) {
+    throw new Error(error);
+  }
+}
 
 module.exports = {
   postUser,
