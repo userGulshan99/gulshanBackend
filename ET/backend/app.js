@@ -16,8 +16,10 @@ app.use(cors({
 
 const userRoutes = require('./routes/users.routes.js');
 const expenseRoutes = require('./routes/expenses.routes.js');
+const { verifyToken } = require('./middlewares/auth.js');
 
 app.use(userRoutes);
+app.use(verifyToken);
 app.use('/expense',expenseRoutes);
 
 

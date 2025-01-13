@@ -1,5 +1,6 @@
 const { where } = require('sequelize');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/users.models.js');
 
@@ -28,11 +29,16 @@ const postUser = async (req, res, next) =>{
     });
 
     user.password = null;
-    req.user = user;
+    const payload = {
+      id : user.id
+    }
 
-    return res.status(200).json({'user' : user});
+    const token = jwt.sign(payload, 'Your$ecret#Key'); 
+
+    return res.status(200).json({'success' : true, token : token});
 
   } catch (error) {
+    console.log(error);
     return res.status(500).json({"error" : "Error occured while creating the user"});  
   }
 
@@ -65,11 +71,17 @@ const getUser = async (req, res, next) =>{
       }
       
       user.password = null;
-      req.user = user;
+      const payload = {
+        id : user.id
+      }
   
-      return res.status(200).json({'user' : user});
+      const token = jwt.sign(payload, 'Your$ecret#Key'); 
 
+      return res.status(200).json({'success' : true, token : token});
+  
     } catch (error) {
+      console.log(error);
+      
       return res.status(500).json({'Error' : 'Internal Server Error'});
     }
   
@@ -92,6 +104,10 @@ async function decryptPassword(password, hash){
   } catch (error) {
     throw new Error(error);
   }
+}
+
+function generateToken(user){
+  return jwt.sign(user, 'Your$ecret#Key');
 }
 
 module.exports = {

@@ -4,7 +4,7 @@ const addExpense = async (req, res, next) =>{
    try {
      const {amount, category , description } = req.body;
 
-     const expense = await Expense.create({
+     const expense = await req.user.createExpense({
         amount : amount,
         category : category,
         description : description
@@ -18,8 +18,13 @@ const addExpense = async (req, res, next) =>{
 
 const getExpenses = async (req, res, next) =>{
     try {
-        const expense = await Expense.findAll();
-        return res.send(expense);
+        const expense = await Expense.findAll({
+            where : {
+                userId : req.user.id
+            }
+        });
+        expense.userId = null;
+        return res.json(expense);
     } catch (error) {
         console.log(error);
     }

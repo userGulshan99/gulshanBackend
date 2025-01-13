@@ -1,7 +1,9 @@
-const user = localStorage.getItem('user')
-if(user){
-     window.location.href = './expense.html';
+const token = localStorage.getItem('token')
+
+if(token){
+    window.location.href = './expense.html';
 }
+
 
 
 const form = document.querySelector('form');
@@ -14,7 +16,7 @@ form.addEventListener('submit', (e)=>{
 
     axios.post('http://localhost:3000/user/signup', {name, email, password})
     .then((result)=>{
-        localStorage.setItem('user', JSON.stringify(result.data.user))
+        localStorage.setItem('token', result.data.token);
         form.reset();
         alert('User created successfully');
     })

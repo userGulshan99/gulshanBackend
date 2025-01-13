@@ -1,8 +1,9 @@
-const user = localStorage.getItem('user')
-
+const user = localStorage.getItem('token')
 if(!user){
     window.location.href = './login.html';
 }
+
+axios.defaults.headers.common['Authorization'] = localStorage.getItem('token');
 
 const form = document.querySelector('form');
 const ul = document.querySelector('ul');
@@ -15,6 +16,8 @@ form.addEventListener('submit', (e)=>{
 
         axios.post(`http://localhost:3000/expense/addExpense`, {amount, description, category})
         .then((result)=>{
+            console.log(result.data);
+            
             addIntoList(result.data);
         })
         .catch((err)=>{
