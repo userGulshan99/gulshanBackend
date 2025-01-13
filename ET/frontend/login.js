@@ -1,3 +1,9 @@
+const user = localStorage.getItem('user')
+
+if(user){
+    window.location.href = './expense.html';
+}
+
 const form = document.querySelector('form');
 
 form.addEventListener('submit', (e)=>{
@@ -7,8 +13,9 @@ form.addEventListener('submit', (e)=>{
 
     axios.post('http://localhost:3000/user/login', {email, password})
     .then((result)=>{
-        console.log(result.data);
+        localStorage.setItem('user', JSON.stringify(result.data.user));
         form.reset();
+        alert('User logged in successfully');
     })
     .catch((err)=>{
         console.log(err);

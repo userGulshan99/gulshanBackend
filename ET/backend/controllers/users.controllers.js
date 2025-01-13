@@ -3,8 +3,10 @@ const bcrypt = require('bcrypt');
 
 const User = require('../models/users.models.js');
 
+// to sign up user
 const postUser = async (req, res, next) =>{
   try {
+
     let { name, email, password } = req.body;
   
       password = await encryptPassword(password);
@@ -24,17 +26,22 @@ const postUser = async (req, res, next) =>{
     user = await User.create({
       name:name, email: email, password:password
     });
-  
-    return res.status(201).json({"user" : user});
-  
+
+    user.password = null;
+    req.user = user;
+
+    return res.status(200).json({'user' : user});
+
   } catch (error) {
     return res.status(500).json({"error" : "Error occured while creating the user"});  
   }
 
 }
 
+// to login user
 const getUser = async (req, res, next) =>{
   try {
+
       const {email, password} = req.body;
       
       if(!email || !password){
@@ -56,8 +63,11 @@ const getUser = async (req, res, next) =>{
       if(!comparedPassword){
         return res.status(401).json({'Error' : 'Password does not match'});
       }
-
-      return res.status(200).json({'message' : 'User logged in successfully'});
+      
+      user.password = null;
+      req.user = user;
+  
+      return res.status(200).json({'user' : user});
 
     } catch (error) {
       return res.status(500).json({'Error' : 'Internal Server Error'});
@@ -65,7 +75,7 @@ const getUser = async (req, res, next) =>{
   
 }
 
-
+// store encrypted password in DB
 async function encryptPassword(password){
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -75,6 +85,7 @@ async function encryptPassword(password){
   }
 }
 
+// compare stored and user's entered password
 async function decryptPassword(password, hash){
   try {
     return await bcrypt.compare(password, hash);
