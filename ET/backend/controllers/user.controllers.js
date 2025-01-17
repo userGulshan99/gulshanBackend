@@ -2,7 +2,7 @@ const { where } = require('sequelize');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const User = require('../models/users.models.js');
+const {User} = require('../models/user.models.js');
 
 // to sign up user
 const postUser = async (req, res, next) =>{
@@ -21,7 +21,7 @@ const postUser = async (req, res, next) =>{
     });
     
     if(user){
-      return res.status(400).json({"message" : "user already exists"});
+      return res.status(400).json({"Error" : "user already exists"});
     }
   
     user = await User.create({
@@ -39,7 +39,7 @@ const postUser = async (req, res, next) =>{
 
   } catch (error) {
     console.log(error);
-    return res.status(500).json({"error" : "Error occured while creating the user"});  
+    return res.status(500).json({"Error" : "Error occured while creating the user"});  
   }
 
 }
@@ -61,16 +61,17 @@ const getUser = async (req, res, next) =>{
       });
     
       if(!user){
-        return res.status(404).json({'message' : 'User Not Found!'});
+        return res.status(404).json({'Error' : 'User Not Found!'});
       }
 
       const comparedPassword = await decryptPassword(password, user.password);
 
       if(!comparedPassword){
-        return res.status(401).json({'Error' : 'Password does not match'});
+        return res.status(401).json({'Error' : 'Password do not match'});
       }
       
       user.password = null;
+
       const payload = {
         id : user.id
       }
@@ -104,10 +105,6 @@ async function decryptPassword(password, hash){
   } catch (error) {
     throw new Error(error);
   }
-}
-
-function generateToken(user){
-  return jwt.sign(user, 'Your$ecret#Key');
 }
 
 module.exports = {
