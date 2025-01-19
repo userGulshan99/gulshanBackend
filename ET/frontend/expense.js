@@ -85,20 +85,26 @@ const leaderBoardBtn = document.querySelector('#leaderboardBtn');
 
 // to add premium membership
 
-    if(localStorage.getItem('premiumtoken')){
-        premiumBtn.innerText = 'Premium User';
-        premiumBtn.style.color = 'blue';
-        premiumBtn.style.fontWeight = 'bold';
-        leaderBoardBtn.style.display = 'flex';
-    }else{
-        
-        axios.get('http://localhost:3000/purchase/getpremiumtoken')
-        .then((result)=>{
-            localStorage.setItem('premiumtoken', result.data.premiumtoken);
-        })
-        .catch(getPremiumSubscription)
+function parseJwt (token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
 
-    }
+    return JSON.parse(jsonPayload);
+}
+
+const premiumToken = parseJwt(localStorage.getItem('token'));
+
+if(premiumToken.ispremiumuser){
+    premiumBtn.innerText = 'Premium User';
+    premiumBtn.style.color = 'blue';
+    premiumBtn.style.fontWeight = 'bold';
+    leaderBoardBtn.style.display = 'flex';
+}else{
+    getPremiumSubscription();
+}
 
 // function to get premium subscription 
 
@@ -122,7 +128,8 @@ function getPremiumSubscription(){
                          })
         
                          e.target.innerText = 'Premium User';
-                         localStorage.setItem('premiumtoken', premiumresponse.data.premiumtoken);
+                         localStorage.setItem('token', premiumresponse.data.token);
+                         
                         leaderBoardBtn.style.display = 'flex';
                          alert('You are a Premium User Now');
                        } catch (error) {
@@ -167,30 +174,12 @@ async function DisplayExpenseLeaderBoard (){
     try {
         const response = await axios.get('http://localhost:3000/usersexpenses')
         
-        let userDetails = Array.from(response.data).map(user => {
-                let expenseAmounts = 0;
-                user.expenses.forEach((expense)=>{
-                    expenseAmounts+=expense.amount;
-                })
-            
-    
-                const obj = {
-                    name : user.name,
-                    expenseAmounts
-                };
-    
-                return obj;
-                
-            });
-    
-            userDetails = userDetails.sort((a,b)=>b.expenseAmounts - a.expenseAmounts);
-    
             const leaderboardList = document.querySelector('#leaderboardList');
             leaderboardList.style.display = 'block';
     
-            userDetails.forEach((element)=>{
+            response.data.forEach((element)=>{
                 const li = document.createElement('li');
-                li.innerHTML = `Name - ${element.name} <br/> Total Expense - ${element.expenseAmounts}`;
+                li.innerHTML = `Name - ${element.name} <br/> Total Expense - ${element.total_cost}`;
                 leaderboardList.appendChild(li);
             })
     } catch (error) {

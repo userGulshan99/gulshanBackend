@@ -3,6 +3,8 @@ const secret_key = 'Your$ecret#Key';
 
 const {User} = require('../models/user.models');
 const {Expense} = require('../models/expense.models');
+const { where, Op, Sequelize } = require('sequelize');
+const sequelize = require('../utils/database');
 
 // middleware to check premium membership
 
@@ -21,21 +23,24 @@ const checkPremiumUser = (req, res, next)=>{
 
 }
 
-// to get leaderboard of expenses
+// optimised query to get leaderboard of expenses
 
 const userExpenses = async (req, res, next) =>{
     try {
         const users = await User.findAll({
+            attributes : ['id','name', [sequelize.fn('sum', sequelize.col('expenses.amount')), 'total_cost']],
+
             include: {
-              model: Expense,
-              required: true,
+                model: Expense,
+                attributes : []
             },
-            attributes : ['name', 'email']
+            group : ['user.id'],
+            order : [['total_cost', 'DESC']]
           });
     
         return res.status(200).json(users);
     } catch (error) {
-        return res.status(500).json({'Error' : 'Internal Server Error'});
+        return res.status(500).json({'Error' : error});
     }
 }
 
