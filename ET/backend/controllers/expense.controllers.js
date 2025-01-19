@@ -1,4 +1,6 @@
 const {Expense} = require('../models/expense.models.js');
+const {User} = require('../models/user.models.js');
+const {Order} = require('../models/order.models.js');
 
 // to store new expense in database
 const addExpense = async (req, res, next) =>{
@@ -11,6 +13,14 @@ const addExpense = async (req, res, next) =>{
         description : description
      });
      
+     // to store total expense amount
+     if(!req.user.totalexpenseamount){
+        req.user.totalexpenseamount = 0;
+     }
+     req.user.totalexpenseamount = Number(req.user.totalexpenseamount) + Number(amount); 
+
+     await req.user.save();
+
      return res.status(201).json(expense);
    } catch (error) {
      return res.status(500).json({'Error' : error});    
@@ -20,6 +30,7 @@ const addExpense = async (req, res, next) =>{
 // to get all stored expenses from database
 const getExpenses = async (req, res, next) =>{
     try {
+        
         const expense = await Expense.findAll({
             where : {
                 userId : req.user.id
@@ -31,7 +42,7 @@ const getExpenses = async (req, res, next) =>{
         if(!expense){
             return res.status(404).json({'Error': 'Expense not found'});
         }
-
+    
         return res.status(200).json(expense);
     } catch (error) {
         console.log(error);
@@ -43,12 +54,30 @@ const getExpenses = async (req, res, next) =>{
 // Delete selected expense
 const deleteExpense = async (req, res, next) =>{
     try {
-        await Expense.destroy({
+       const expense =  await Expense.findOne({
             where:{
                 id: req.params.id
             }
         });
-        return res.status(200).json({'Message' : 'Expense Deleted Successfully'});
+ 
+        if(!req.user.totalexpenseamount){
+            req.user.totalexpenseamount = 0;
+        }
+        
+        // substract expense amount from total amount
+         req.user.totalexpenseamount = Number(req.user.totalexpenseamount) - Number(expense.amount); 
+    
+         const delete_expense = expense.destroy(); 
+         const saveuser = req.user.save();
+
+         Promise.all([delete_expense, saveuser])
+        .then(()=>{
+            return res.status(200).json({'Message' : 'Expense Deleted Successfully'});
+        })
+        .catch((err)=>{
+            throw new Error(err);
+        })
+
     } catch (error) {
         return res.status(500).json({'Error' : 'Unable to delete expense', error});
     }

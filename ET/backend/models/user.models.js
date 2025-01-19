@@ -24,6 +24,9 @@ const User = sequelize.define('user',{
     },
     ispremiumuser : {
         type : DataTypes.BOOLEAN
+    },
+    totalexpenseamount : {
+        type : DataTypes.BIGINT,
     }
 }
 )
