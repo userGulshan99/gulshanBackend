@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended : true }));
@@ -18,6 +18,7 @@ app.use(cors({
 
 const userRoutes = require('./routes/user.routes.js');
 const expenseRoutes = require('./routes/expense.routes.js');
+const premiumUsersRoutes = require('./routes/premium.routes.js');
 
 //routes to purchase premium membership
 const purchaseRoutes = require('./routes/purchase.routes.js');
@@ -27,9 +28,12 @@ const {checkPremiumUser} = require('./controllers/premiumuser.controllers.js');
 
 app.use(userRoutes);
 app.use(verifyToken);
-app.get('/checkpremium', checkPremiumUser);
 app.use('/expense',expenseRoutes);
 app.use('/purchase',purchaseRoutes);
+
+// check if user is premium and then give acces to premium feautures
+app.use(checkPremiumUser);
+app.use(premiumUsersRoutes);
 
 // Order model to store payment id and status in database
 const { Order } = require('./models/order.models.js');

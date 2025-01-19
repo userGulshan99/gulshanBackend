@@ -1,9 +1,13 @@
+const jwt = require('jsonwebtoken');
+const secret_key = 'Your$ecret#Key';
+
 const Razorpay = require("razorpay")
 const { Order } = require("../models/order.models.js");
 
 // to generate initial order and get order id from razorpay
 const purchasePremium = async (req, res, next) => {
     try {
+
         const razorpay = new Razorpay({
             key_id : process.env.KEY_ID,
             key_secret : process.env.KEY_SECRET
@@ -55,13 +59,9 @@ const updatetransactionStatus = async (req, res) =>{
         req.user.ispremiumuser = true;
         await req.user.save();
 
-        const payload = {
-            name : req.user.name,
-            email : req.user.email,
-            premiumuser : true
-        }
+        const token = jwt.sign('PremiumUser', secret_key)
         
-        return res.status(200).json({'success' : 'premium membership added successfully', payload});     
+        return res.status(200).json({'success' : true, premiumtoken : token});     
    } catch (error) {
         console.log('500 error', error);
     
@@ -70,7 +70,25 @@ const updatetransactionStatus = async (req, res) =>{
     
 }
 
+
+
+// to send premium token to frontend
+const getPremiumToken = (req, res, next) =>{
+    try {
+        if(req.user.ispremiumuser){
+            const premiumtoken = jwt.sign('PremiumUser', secret_key);
+            return res.status(200).json({'premiumtoken' : premiumtoken});
+        }else{
+            throw new Error("You are not premium user");
+        }
+    } catch (error) {
+        return res.status(401).json({error, 'message' : 'You are not premium user'});
+    }
+}
+
+
 module.exports = {
     purchasePremium,
-    updatetransactionStatus
+    updatetransactionStatus,
+    getPremiumToken
 };
