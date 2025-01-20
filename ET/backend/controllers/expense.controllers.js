@@ -2,27 +2,42 @@ const {Expense} = require('../models/expense.models.js');
 const {User} = require('../models/user.models.js');
 const {Order} = require('../models/order.models.js');
 
+const sequelize = require('../utils/database.js');
+
 // to store new expense in database
 const addExpense = async (req, res, next) =>{
    try {
+    const t = await sequelize.transaction();
+
      const {amount, category , description } = req.body;
+
+     if(!amount || !category){
+        return res.status(400).json({'Error' : 'Invalid Input'});
+     }
 
      const expense = await req.user.createExpense({
         amount : amount,
         category : category,
         description : description
+     },{
+        transaction : t
      });
      
-     // to store total expense amount
+     // update total expense amount
      if(!req.user.totalexpenseamount){
-        req.user.totalexpenseamount = 0;
-     }
-     req.user.totalexpenseamount = Number(req.user.totalexpenseamount) + Number(amount); 
+         req.user.totalexpenseamount = 0;
+        }
+        req.user.totalexpenseamount = Number(req.user.totalexpenseamount) + Number(amount); 
+        
+    // save total expense amount
+    await req.user.save({transaction : t});
 
-     await req.user.save();
+    await t.commit();
+    
+    return res.status(201).json(expense);
 
-     return res.status(201).json(expense);
    } catch (error) {
+    await t.rollback();
      return res.status(500).json({'Error' : error});    
    }
 }
@@ -44,6 +59,7 @@ const getExpenses = async (req, res, next) =>{
         }
     
         return res.status(200).json(expense);
+
     } catch (error) {
         console.log(error);
         return res.json(500).json({"Error" : error});
@@ -53,33 +69,33 @@ const getExpenses = async (req, res, next) =>{
 
 // Delete selected expense
 const deleteExpense = async (req, res, next) =>{
+    const t = await sequelize.transaction();
+
     try {
        const expense =  await Expense.findOne({
             where:{
                 id: req.params.id
             }
+        },{
+            transaction : t
         });
  
-        if(!req.user.totalexpenseamount){
-            req.user.totalexpenseamount = 0;
+        if(!expense){
+            await t.rollback();
+            return res.status(404).json({"Error" : "Expense Not Found"});
         }
         
         // substract expense amount from total amount
-         req.user.totalexpenseamount = Number(req.user.totalexpenseamount) - Number(expense.amount); 
+         const newTotalExpenseAmount = Number(req.user.totalexpenseamount || 0) - Number(expense.amount); 
     
-         const delete_expense = expense.destroy(); 
-         const saveuser = req.user.save();
 
-         Promise.all([delete_expense, saveuser])
-        .then(()=>{
-            return res.status(200).json({'Message' : 'Expense Deleted Successfully'});
-        })
-        .catch((err)=>{
-            throw new Error(err);
-        })
+        await Promise.all([ req.user.update({totalexpenseamount : newTotalExpenseAmount}, { transaction : t}), expense.destroy({ transaction : t})])
+
+        await t.commit();
 
     } catch (error) {
-        return res.status(500).json({'Error' : 'Unable to delete expense', error});
+        await t.rollback();
+        return res.status(500).json({'Error' : 'Unable to delete expense'});
     }
 }
 
