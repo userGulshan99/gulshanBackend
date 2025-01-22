@@ -6,8 +6,7 @@ const apiKey = defualtClient.authentications['api-key'];
 
 apiKey.apiKey = process.env.API_KEY;
 
-function sendPasswordResetMail (email){
-
+function sendPasswordResetMail (email, id){
     const transEmailApi = new Sib.TransactionalEmailsApi();
 
     const sender = {
@@ -23,7 +22,7 @@ function sendPasswordResetMail (email){
         sender,
         to: receivers,
         subject : 'Password Reset',
-        htmlContent : '<h1> Hi, you requested for reset password link </h1> <br/> <a href="https://www.google.com/"> Click here to reset password </a>'
+        htmlContent : `<h1> Hi, you requested for reset password link </h1> <br/> <a href="http://localhost:3000/password/resetpassword/${id}"> Click here to reset password </a>`
     })
 };
 
