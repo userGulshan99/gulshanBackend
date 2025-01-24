@@ -9,6 +9,9 @@
 <body>
     
         <h1 id="heading" class="center">Day to Day Expenses</h1>
+        <p id="date">22/12/2024</p>
+        
+        
         <h2 class="center">2021</h2>
         <div class="monthly">
             <p class="center">March 2021</p>
@@ -22,15 +25,16 @@
                         <th>Expense</th>
                     </tr>
                 </thead>
-                <tbody>
-                </tbody>
+
+                <tbody></tbody>
+                
                 <tfoot>
                     <tr class="savings">
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td id="savings">Savings = $ 54,330.00</td>
+                        <td id="savings">Savings = $ 0</td>
                     </tr>
                 </tfoot>
             </table>
@@ -94,15 +98,27 @@
         </div>
 
 
-        <button id="download"><img src="./icons/download.svg" alt=""></button>
-    
-        <div class="pagination">
-                <button>1</button>
-                <button id="clicked">2</button>
-                <button>3</button>
-        </div>
+        <img  id="download" src="./icons/download.svg" alt="">
 
-
+            <div class="pagination">
+                <div class="rows">
+                    <label for="rows">Rows per page : </label>
+                    <select name="rows" id="rows">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+                <div id="pagination">
+                    <button id="clicked">1</button>
+                        <button>2</button>
+                        <button>3</button>
+                </div>
+            </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js" integrity="sha512-DdX/YwF5e41Ok+AI81HI8f5/5UsoxCVT9GKYZRIzpLxb8Twz4ZwPPX+jQMwMhNQ9b5+zDEefc+dcvQoPWGNZ3g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="./ExpenseReport.js"></script>

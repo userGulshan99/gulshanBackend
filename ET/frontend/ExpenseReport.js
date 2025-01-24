@@ -1,6 +1,9 @@
 axios.defaults.headers.common['Authorization'] = localStorage.getItem('token');
 
-const pagination = document.querySelector('.pagination');
+const date = document.querySelector('#date');
+date.innerText = new Date().toLocaleString();
+
+const pagination = document.querySelector('#pagination');
 
 getExpensesReportResponse(1);
 
@@ -24,8 +27,9 @@ async function getExpensesReportResponse(page){
     try {
 
         const buttons = pagination.querySelectorAll('button');
+        const rows = Number(localStorage.getItem('rowsRequired')) || 10;
         
-        let response = await axios.get(`http://localhost:3000/premium/getmonthlyexpenses?page=${page}`)
+        let response = await axios.get(`http://localhost:3000/premium/getmonthlyexpenses?page=${page}&rows=${rows}`)
         response = response.data;
 
         if(!response.hasNextPage){
@@ -110,3 +114,10 @@ function appndMonthlyRow(data1, data2, data3, data4, data5){
     return tr;
     
 }
+
+
+// store number of rows of expenses require in localStorage
+const rowsRequired = document.querySelector('.rows').querySelector('select');
+rowsRequired.addEventListener('click', (e)=>{
+    localStorage.setItem('rowsRequired', e.target.value);
+})

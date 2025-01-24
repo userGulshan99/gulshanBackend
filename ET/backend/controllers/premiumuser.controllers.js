@@ -45,7 +45,11 @@ const getExpensesReport = async (req, res, next) =>{
     try {
         let page = req.query.page || 1;
             page = Number(page);
-        const items_per_page = 10;
+
+
+        //set required rows as per the query 
+        let items_per_page = req.query.rows || 10;
+        items_per_page = Number(items_per_page);
 
         const { count, rows } = await Expense.findAndCountAll({
             offset: (page-1)*items_per_page,
