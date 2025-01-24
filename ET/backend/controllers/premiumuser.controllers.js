@@ -18,6 +18,8 @@ const checkPremiumUser = (req, res, next)=>{
         }
 
     } catch (error) {
+        console.log(error);
+        
         return res.status(401).json(error);
     }
 
@@ -28,14 +30,7 @@ const checkPremiumUser = (req, res, next)=>{
 const userExpenses = async (req, res, next) =>{
     try {
         const users = await User.findAll({
-            attributes : ['id','name', [sequelize.fn('sum', sequelize.col('expenses.amount')), 'total_cost']],
-
-            include: {
-                model: Expense,
-                attributes : []
-            },
-            group : ['user.id'],
-            order : [['total_cost', 'DESC']]
+            attributes : ['id','name', 'totalexpenseamount']
           });
     
         return res.status(200).json(users);
@@ -44,8 +39,38 @@ const userExpenses = async (req, res, next) =>{
     }
 }
 
+
+// get limited data to display on each page
+const getExpensesReport = async (req, res, next) =>{
+    try {
+        let page = req.query.page || 1;
+            page = Number(page);
+        const items_per_page = 10;
+
+        const { count, rows } = await Expense.findAndCountAll({
+            offset: (page-1)*items_per_page,
+            limit: items_per_page,
+        });
+
+        const data = {
+            expenses : rows,
+            currentPage : page,
+            hasNextPage : (page*items_per_page) < count,
+            nextPage : page+1,
+            previousPage : (page-1) || 1,
+            totalPages : Math.ceil(count/items_per_page)
+        };
+
+        return res.status(200).json(data);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({'Error' : error});
+    }
+}
+
 module.exports = {
     checkPremiumUser,
-    userExpenses
+    userExpenses,
+    getExpensesReport
 };
 

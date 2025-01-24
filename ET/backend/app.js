@@ -32,14 +32,19 @@ const purchaseRoutes = require('./routes/purchase.routes.js');
 const { verifyToken } = require('./middlewares/auth.js');
 const {checkPremiumUser} = require('./controllers/premiumuser.controllers.js');
 
+
+
 app.use('/password', passwordRoutes);
 app.use(userRoutes);
-// app.use(verifyToken);
-app.use('/expense', verifyToken ,expenseRoutes);
-app.use('/purchase', verifyToken ,purchaseRoutes);
+app.use(verifyToken);
+
+app.use('/purchase', purchaseRoutes);
+
+app.use('/expense',  expenseRoutes);
 
 // check if user is premium and then give acces to premium feautures
-app.use(checkPremiumUser, premiumUsersRoutes);
+app.use(checkPremiumUser);
+app.use('/premium', premiumUsersRoutes);
 
 // Order model to store payment id and status in database
 const { Order } = require('./models/order.models.js');
@@ -66,4 +71,4 @@ sequelize.sync().then((result)=>{
 })
 .catch((err)=>{
     console.log(err);
-})
+});

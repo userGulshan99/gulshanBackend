@@ -36,15 +36,15 @@ th{
     color: white;
 }
 
-#savings td{
+.savings td{
     border: none;
 }
 
-#savings{
+.savings{
     border: 1px solid black ;
 }
 
-.savings{
+#savings{
     color: rgb(66, 66, 224);
 }
 
@@ -78,4 +78,28 @@ img{
 
 td{
     min-width: 100px;
+}
+
+
+.pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.pagination button{
+    padding: 3px 5px;
+    margin: 0px 2px;
+    outline: none;
+    background: transparent;
+    box-shadow: none;
+}
+
+#clicked{
+    padding: 7px 9px;
+}
+
+.clicked{
+    background-color: red;
 }
