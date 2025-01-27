@@ -6,14 +6,15 @@ const sequelize = require('../utils/database.js');
 
 // to store new expense in database
 const addExpense = async (req, res, next) =>{
-   try {
     const t = await sequelize.transaction();
+   try {
 
      const {amount, category , description } = req.body;
 
      if(!amount || !category){
         return res.status(400).json({'Error' : 'Invalid Input'});
      }
+
 
      const expense = await req.user.createExpense({
         amount : amount,
@@ -26,7 +27,7 @@ const addExpense = async (req, res, next) =>{
      // update total expense amount
      if(!req.user.totalexpenseamount){
          req.user.totalexpenseamount = 0;
-        }
+    }
         req.user.totalexpenseamount = Number(req.user.totalexpenseamount) + Number(amount); 
         
     // save total expense amount
@@ -38,7 +39,7 @@ const addExpense = async (req, res, next) =>{
 
    } catch (error) {
     await t.rollback();
-     return res.status(500).json({'Error' : error});    
+     return res.status(500).json({'Error' : 'Unable to add expenses in database'});    
    }
 }
 
@@ -49,7 +50,9 @@ const getExpenses = async (req, res, next) =>{
         const expense = await Expense.findAll({
             where : {
                 userId : req.user.id
-            }
+            },
+            order : [['id', 'DESC']],
+            limit: 10
         });
         
         expense.userId = null;
@@ -61,8 +64,7 @@ const getExpenses = async (req, res, next) =>{
         return res.status(200).json(expense);
 
     } catch (error) {
-        console.log(error);
-        return res.json(500).json({"Error" : error});
+        return res.json(500).json({"Error" : 'Could not get expenses at this moment. Please, try again.'});
     }
 }
 
@@ -98,6 +100,8 @@ const deleteExpense = async (req, res, next) =>{
         return res.status(500).json({'Error' : 'Unable to delete expense'});
     }
 }
+
+
 
 module.exports = {
     addExpense,

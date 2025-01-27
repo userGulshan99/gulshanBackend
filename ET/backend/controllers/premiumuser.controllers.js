@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const secret_key = 'Your$ecret#Key';
 
 const {User} = require('../models/user.models');
 const {Expense} = require('../models/expense.models');
@@ -18,8 +17,6 @@ const checkPremiumUser = (req, res, next)=>{
         }
 
     } catch (error) {
-        console.log(error);
-        
         return res.status(401).json(error);
     }
 
@@ -35,7 +32,7 @@ const userExpenses = async (req, res, next) =>{
     
         return res.status(200).json(users);
     } catch (error) {
-        return res.status(500).json({'Error' : error});
+        return res.status(500).json({'Error' : 'Could not get data at this moment'});
     }
 }
 
@@ -67,8 +64,7 @@ const getExpensesReport = async (req, res, next) =>{
 
         return res.status(200).json(data);
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({'Error' : error});
+        return res.status(500).json({'Error' : 'Could not get data at this moment'});
     }
 }
 

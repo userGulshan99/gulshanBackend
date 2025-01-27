@@ -29,16 +29,18 @@ const postUser = async (req, res, next) =>{
     });
 
     user.password = null;
+
     const payload = {
-      id : user.id
+      id : user.id,
+      ispremiumuser : user.ispremiumuser,
+      name : user.name
     }
 
-    const token = jwt.sign(payload, 'Your$ecret#Key'); 
+    const token = jwt.sign(payload, process.env.AUTH_SECRET_KEY); 
 
     return res.status(200).json({'success' : true, token : token});
 
   } catch (error) {
-    console.log(error);
     return res.status(500).json({"Error" : "Error occured while creating the user"});  
   }
 
@@ -70,19 +72,20 @@ const getUser = async (req, res, next) =>{
         return res.status(401).json({'Error' : 'Password do not match'});
       }
       
+      req.user = user;
+
       user.password = null;
 
       const payload = {
-        id : user.id
+        id : user.id,
+        ispremiumuser : user.ispremiumuser,
+        name : user.name
       }
   
-      const token = jwt.sign(payload, 'Your$ecret#Key'); 
+      const token = jwt.sign(payload, process.env.AUTH_SECRET_KEY); 
 
       return res.status(200).json({'success' : true, token : token});
-  
     } catch (error) {
-      console.log(error);
-      
       return res.status(500).json({'Error' : 'Internal Server Error'});
     }
   
@@ -109,5 +112,7 @@ async function decryptPassword(password, hash){
 
 module.exports = {
   postUser,
-  getUser
+  getUser,
+  encryptPassword, 
+  decryptPassword
 };

@@ -27,6 +27,7 @@ const User = sequelize.define('user',{
     },
     totalexpenseamount : {
         type : DataTypes.BIGINT,
+        defaultValue : 0
     }
 }
 )

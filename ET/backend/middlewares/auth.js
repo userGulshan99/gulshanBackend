@@ -1,17 +1,21 @@
 const jwt = require('jsonwebtoken');
-const secret_key = 'Your$ecret#Key';
 
-const User = require('../models/users.models.js');
+const {User} = require('../models/user.models.js');
 
 const verifyToken = async (req, res, next) =>{
+
     try {
         const token = req.header('Authorization');
         
         if(!token){
-            return res.status(401).json({'error message' : 'User needs to login first'});
+            return res.status(401).json({'Error' : 'User needs to login first'});
         }
         
-        const payload = jwt.verify(token, secret_key);
+        try {
+            var payload = jwt.verify(token, process.env.AUTH_SECRET_KEY);
+        } catch (error) {
+            return res.status(401).json({'Error' : 'Invalid or Expired token'});            
+        }
         
         const user = await User.findOne({
             where : {
@@ -20,16 +24,14 @@ const verifyToken = async (req, res, next) =>{
         });
 
         if(!user){
-            return res.status(404).json({'Bad Request' : 'user not found'});
+            return res.status(401).json({'Error' : 'user not found'});
         }
 
         req.user = user;
         
         next();
     } catch (error) {
-        console.log('verify token error : ', error);
-        return res.status(500).json({'error' : error})
-        
+        return res.status(401).json({'Error' : 'Bad Request'});
     }
 }
 

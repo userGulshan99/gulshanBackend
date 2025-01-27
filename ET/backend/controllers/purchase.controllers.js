@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const secret_key = 'Your$ecret#Key';
 
 const Razorpay = require("razorpay")
 const { Order } = require("../models/order.models.js");
@@ -9,25 +8,24 @@ const purchasePremium = async (req, res, next) => {
     try {
 
         const razorpay = new Razorpay({
-            key_id : process.env.KEY_ID,
-            key_secret : process.env.KEY_SECRET
+            key_id : process.env.RAZORPAY_KEY_ID,
+            key_secret : process.env.RAZORPAY_KEY_SECRET
         });
         
         razorpay.orders.create({amount : 100, currency : "INR"}, (err, order)=>{
-            req.user.createOrder({
-                orderid : order.id,
-                status : 'PENDING'
-            })
-            .then(()=>{
-                return res.status(201).json({order, key_id : razorpay.key_id});
-            })
-            .catch((err)=>{
-                throw new Error(err);
-            })
+                req.user.createOrder({
+                    orderid : order.id,
+                    status : 'PENDING'
+                })
+                .then(()=>{
+                    return res.status(201).json({order, key_id : razorpay.key_id});
+                })
+                .catch((err)=>{
+                    throw new Error(err);
+                })
         });
 
     } catch (error) {
-        console.log(error);
         return res.status(400).json({'Error' : error, 'Message' : 'Something went wrong'});
     }
 }
@@ -59,13 +57,17 @@ const updatetransactionStatus = async (req, res) =>{
         req.user.ispremiumuser = true;
         await req.user.save();
 
-        const token = jwt.sign('PremiumUser', secret_key)
+      const payload = {
+        id : req.user.id,
+        ispremiumuser : true,
+        name : req.user.name
+      }
+  
+      const token = jwt.sign(payload, process.env.AUTH_SECRET_KEY); 
         
-        return res.status(200).json({'success' : true, premiumtoken : token});     
+        return res.status(200).json({'success' : true, token : token});     
    } catch (error) {
-        console.log('500 error', error);
-    
-        return res.status(500).json({"Error" : error});
+        return res.status(500).json({"Error" : 'Payment failed'});
    }
     
 }
@@ -76,13 +78,13 @@ const updatetransactionStatus = async (req, res) =>{
 const getPremiumToken = (req, res, next) =>{
     try {
         if(req.user.ispremiumuser){
-            const premiumtoken = jwt.sign('PremiumUser', secret_key);
+            const premiumtoken = jwt.sign('PremiumUser', process.env.AUTH_SECRET_KEY);
             return res.status(200).json({'premiumtoken' : premiumtoken});
         }else{
             throw new Error("You are not premium user");
         }
     } catch (error) {
-        return res.status(401).json({error, 'message' : 'You are not premium user'});
+        return res.status(401).json({'Error' : 'You are not premium user'});
     }
 }
 

@@ -1,12 +1,17 @@
 require('dotenv').config();
 
 const path = require('path');
+const fs = require('fs');
+
+const PORT = process.env.PORT || 3000;
 
 const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
 
-const PORT = 3000;
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags : 'a'});
+app.use(morgan('combined', {stream : accessLogStream}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended : true }));
@@ -26,13 +31,12 @@ const premiumUsersRoutes = require('./routes/premium.routes.js');
 const passwordRoutes = require('./routes/password.routes.js');
 
 
+
 //routes to purchase premium membership
 const purchaseRoutes = require('./routes/purchase.routes.js');
 
 const { verifyToken } = require('./middlewares/auth.js');
 const {checkPremiumUser} = require('./controllers/premiumuser.controllers.js');
-
-
 
 app.use('/password', passwordRoutes);
 app.use(userRoutes);
@@ -65,10 +69,10 @@ forgotPasswordRequests.belongsTo(User);
 const sequelize = require('./utils/database.js');
 
 sequelize.sync().then((result)=>{
-    app.listen(3000, '0.0.0.0', ()=>{
+    app.listen(PORT, '0.0.0.0', ()=>{
         console.log('Server Started at port', PORT);
     })
 })
 .catch((err)=>{
-    console.log(err);
+    console.log('could not start server. There may be an error occured.');
 });

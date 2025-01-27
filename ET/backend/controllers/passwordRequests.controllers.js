@@ -38,8 +38,7 @@ const forgotPassword = async (req, res, next) =>{
         return res.status(200).send('<h1> Password reset link sent successfully on registered email.</h1>');
 
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({'Error' : 'unable to send link'});
+        return res.status(500).json({'Error' : 'unable to send link', 'message' : 'There was an error occured while sending link to reset password. please, try again'});
     }
 }
 
@@ -62,10 +61,9 @@ const checkResetPasswordRequest = async (req, res, next) =>{
             }
         
             // serve form to change password 
-            return res.sendFile(path.join(__dirname,'..', 'public', 'resetPassword.html'));
+            return res.status(200).sendFile(path.join(__dirname,'..', 'public', 'resetPassword.html'));
 
     } catch (error) {
-        console.log(error);
         return res.status(400).json({'Error' : 'Invalid Request'});
     }
 }
@@ -106,7 +104,7 @@ const setNewPassword = async (req, res, next) =>{
             }
         })
     
-        return res.status(200).send('<h2>New Password Set Successfully.<br/> <a href="http://127.0.0.1:5501/ET/frontend/login.html"> Please login again with new password </a> </h2>');
+        return res.status(200).send('<h2>New Password Set Successfully.<br/> <a href="http://127.0.0.1:5501/ET/frontend/login.html"> Login Now </a> </h2>');
 
     } catch (error) {
         return res.status(500).json({'Error' : 'Unable to change password, please try again'});
