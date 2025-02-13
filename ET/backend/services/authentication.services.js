@@ -29,6 +29,7 @@ async function generateToken(payload){
   }
 }
 
+
 module.exports = {
     encryptPassword, 
     decryptPassword,

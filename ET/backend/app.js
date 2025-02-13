@@ -55,6 +55,7 @@ const { Order } = require('./models/order.models.js');
 const { User } = require('./models/user.models.js');
 const { Expense } = require('./models/expense.models.js');
 const {forgotPasswordRequests} = require('./models/ForgotPasswordRequests.js');
+const {listOfDownloadedExpenses} = require('./models/url.models.js');
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
@@ -66,7 +67,12 @@ Order.belongsTo(User);
 User.hasMany(forgotPasswordRequests);
 forgotPasswordRequests.belongsTo(User);
 
+User.hasMany(listOfDownloadedExpenses);
+listOfDownloadedExpenses.belongsTo(User);
+
+
 const sequelize = require('./utils/database.js');
+
 
 sequelize.sync().then((result)=>{
     app.listen(PORT, '0.0.0.0', ()=>{

@@ -15,4 +15,5 @@ const listOfDownloadedExpenses = sequelize.define('downloadedexpenseslist',{
 }
 )
 
+
 module.exports = {listOfDownloadedExpenses};

@@ -87,7 +87,6 @@ async function deleteExpenseFromDatabase (user, expenseId) {
     }
 };
 
-
 // get limited user's expenses with request value
 async function getDataForPagination(userId, pageNumber, items_per_page){
     try {

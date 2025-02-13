@@ -111,6 +111,7 @@ const setNewPassword = async (req, res, next) =>{
     }
 }
 
+
 module.exports = {
     forgotPassword,
     checkResetPasswordRequest,

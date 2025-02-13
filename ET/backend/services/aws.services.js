@@ -32,7 +32,6 @@ async function uploadToS3(data, filename, Bucket= 'appexpensetracker'){
 
 }
 
-
 module.exports = {
     uploadToS3
 }

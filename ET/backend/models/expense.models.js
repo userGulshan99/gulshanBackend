@@ -2,6 +2,7 @@ const {DataTypes} = require('sequelize');
 
 const sequelize = require('../utils/database.js');
 
+
 const Expense = sequelize.define('expense',{
     id:{
         type : DataTypes.INTEGER,

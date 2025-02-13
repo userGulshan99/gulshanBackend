@@ -35,6 +35,7 @@ async function findActiveForgotPasswordRequest(requestId) {
     }
 }
 
+
 module.exports = {
     createForgotPasswordRequests,
     findActiveForgotPasswordRequest

@@ -20,6 +20,7 @@ function sendPasswordResetMail (email, id){
          email : email
      }];
  
+     
      return transEmailApi.sendTransacEmail({
          sender,
          to: receivers,

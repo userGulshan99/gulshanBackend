@@ -57,6 +57,7 @@ async function updateUser(userId, userDetails) {
 }
 
 
+
 module.exports = {
     getUserFromDatabase,
     getAllUsersFromDatabase,
