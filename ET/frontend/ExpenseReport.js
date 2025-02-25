@@ -13,7 +13,7 @@ pagination.addEventListener('click', async (e)=>{
         pagination.querySelector('#clicked').removeAttribute('id');
         e.target.closest('button').id = ('clicked');
         const page = e.target.closest('button').dataset.page;
-        
+            
         getExpensesReportResponse(page);
 
     } catch (error) {
@@ -29,7 +29,7 @@ async function getExpensesReportResponse(page){
         const buttons = pagination.querySelectorAll('button');
         const rows = Number(localStorage.getItem('rowsRequired')) || 10;
         
-        let response = await axios.get(`http://localhost:3000/premium/getmonthlyexpenses?page=${page}&rows=${rows}`)
+        let response = await axios.get(`${CONFIG.BASE_URL}/premium/getmonthlyexpenses?page=${page}&rows=${rows}`)
         response = response.data;
 
         if(!response.hasNextPage){
@@ -55,6 +55,9 @@ async function getExpensesReportResponse(page){
         appendExpensesOnTable(expenses);
 
     } catch (error) {
+        if(error.status == 401){
+            document.body.innerHTML = '<h1> Please Buy Premium Membership To Access This Feature</h1>'
+        }
         console.log(error);
     }
 }
@@ -118,6 +121,52 @@ function appndMonthlyRow(data1, data2, data3, data4, data5){
 
 // store number of rows of expenses require in localStorage
 const rowsRequired = document.querySelector('.rows').querySelector('select');
+
 rowsRequired.addEventListener('click', (e)=>{
     localStorage.setItem('rowsRequired', e.target.value);
+})
+
+
+
+const download = document.getElementById('download');
+
+download.addEventListener('click', async (e)=>{
+
+    try {
+        const response = await axios.get(`${CONFIG.BASE_URL}/premium/downloadexpenses`);
+        let url = response.data.fileUrl;
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.click();
+
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+
+document.getElementById('listOfDownloadedExpense')
+.addEventListener('click', async (e)=>{
+    try {
+        const response = await axios.get(`${CONFIG.BASE_URL}/premium/downloadedfileurl`);
+        const data = response.data.urlList
+        const ul = document.createElement('ul');
+
+        data.forEach((Element)=>{
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = Element.url;
+            a.textContent = Element.url.split('/')[4];
+            li.appendChild(a);
+            ul.appendChild(li);
+        })
+        
+        document.body.innerHTML = '';
+        document.body.appendChild(ul);
+        
+    } catch (error) {
+        
+    }
+
 })

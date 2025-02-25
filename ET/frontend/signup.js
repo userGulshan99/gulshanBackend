@@ -14,7 +14,7 @@ form.addEventListener('submit', (e)=>{
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    axios.post('http://localhost:3000/user/signup', {name, email, password})
+    axios.post(`${CONFIG.BASE_URL}/user/signup`, {name, email, password})
     .then((result)=>{
         localStorage.setItem('token', result.data.token);
         form.reset();

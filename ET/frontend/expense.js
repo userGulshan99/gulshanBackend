@@ -16,7 +16,7 @@ form.addEventListener('submit', (e)=>{
     const description = e.target.description.value;
     const category = e.target.category.value;
 
-        axios.post(`http://localhost:3000/expense/addExpense`, {amount, description, category})
+        axios.post(`${CONFIG.BASE_URL}/expense/addExpense`, {amount, description, category})
         .then((result)=>{
             addIntoList(result.data);
         })
@@ -42,7 +42,7 @@ function addIntoList(obj){
     deleteBtn.addEventListener('click', (e)=>{
         e.target.parentElement.remove();
         
-        axios.delete(`http://localhost:3000/expense/deleteExpense/${obj.id}`)
+        axios.delete(`${CONFIG.BASE_URL}/expense/deleteExpense/${obj.id}`)
         .then((result)=>{
             alert('Expense deleted successfully');
         })
@@ -59,7 +59,7 @@ function addIntoList(obj){
 // get again all expenses from database
 
 document.addEventListener('DOMContentLoaded', (e)=>{
-    axios.get('http://localhost:3000/expense/getExpenses')
+    axios.get(`${CONFIG.BASE_URL}/expense/getExpenses`)
     .then((data)=>{
         data.data.forEach(expense =>{
             addIntoList(expense);
@@ -111,7 +111,7 @@ if(premiumToken.ispremiumuser){
 function getPremiumSubscription(){
     premiumBtn.addEventListener('click', async (e)=>{
             try {
-                const response = await axios.get('http://localhost:3000/purchase/premiummembership');
+                const response = await axios.get(`${CONFIG.BASE_URL}/purchase/premiummembership`);
         
                 const key = response.data.key_id;
                 const order_id = response.data.order.id;
@@ -121,7 +121,7 @@ function getPremiumSubscription(){
                     'order_id' : order_id,
                     'handler' : async  (resp) => {
                        try {
-                        const premiumresponse = await axios.post('http://localhost:3000/purchase/updatetransactionstatus', {
+                        const premiumresponse = await axios.post(`${CONFIG.BASE_URL}/purchase/updatetransactionstatus`, {
                              order_id : order_id,
                              payment_id : resp.razorpay_payment_id,
                              status : "SUCCESS"
@@ -145,7 +145,7 @@ function getPremiumSubscription(){
             
                 rzp1.on('payment.failed', async (response)=>{
         
-                    axios.post('http://localhost:3000/purchase/updatetransactionstatus', {
+                    axios.post(`${CONFIG.BASE_URL}/purchase/updatetransactionstatus`, {
                         order_id : order_id,
                         payment_id : response.error.metadata.payment_id,
                         status : "FAILED"
@@ -172,16 +172,20 @@ leaderBoardBtn.addEventListener('click', DisplayExpenseLeaderBoard);
 async function DisplayExpenseLeaderBoard (){
     
     try {
-        const response = await axios.get('http://localhost:3000/usersexpenses')
+        const response = await axios.get(`${CONFIG.BASE_URL}/premium/usersexpenses`);
         
-            const leaderboardList = document.querySelector('#leaderboardList');
-            leaderboardList.style.display = 'block';
-    
-            response.data.forEach((element)=>{
+        const leaderboardList = document.querySelector('#premiumBtns');
+        leaderboardList.style.display = 'block';
+        leaderboardList.innerHTml = '';
+        
+        const ul = document.createElement('ul');
+        
+        response.data.forEach((element)=>{
                 const li = document.createElement('li');
-                li.innerHTML = `Name - ${element.name} <br/> Total Expense - ${element.total_cost}`;
-                leaderboardList.appendChild(li);
+                li.innerHTML = `Name - ${element.name} <br/> Total Expense : ${element.totalexpenseamount}`;
+                ul.appendChild(li);
             })
+            leaderboardList.appendChild(ul);
     } catch (error) {
         if(error.status === 401) alert('Please buy premium to access this feature');
     }

@@ -3,7 +3,7 @@ const sequelize = require('../../utils/database.js');
 const {Expense} = require('../../models/expense.models.js');
 
 // to get all stored expenses of user
-async function getAllExpensesOfUser(userId, order, rowsLimit, transaction) {
+async function getAllExpensesOfUser(userId, order='ASC', rowsLimit) {
     try {
 
         if(!userId){
@@ -15,9 +15,8 @@ async function getAllExpensesOfUser(userId, order, rowsLimit, transaction) {
             where : {
                 userId : userId
             },
-            order : order,
+            order : [['id', order]],
             limit: rowsLimit,
-            transaction : transaction
         });
 
         return expenses;

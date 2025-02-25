@@ -3,15 +3,21 @@ require('dotenv').config();
 const path = require('path');
 const fs = require('fs');
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
+const {uploadToS3} = require('./services/aws.services.js');
 
-const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags : 'a'});
-app.use(morgan('combined', {stream : accessLogStream}));
+// const accessLogStream = {
+//     write: async (message) => {
+//         await uploadToS3(message, `logs/${Date.now()}.log`, 'your-bucket-name');
+//     }
+// };
+// const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags : 'a'});
+// app.use(morgan('combined', {stream : accessLogStream}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended : true }));
@@ -31,6 +37,7 @@ const premiumUsersRoutes = require('./routes/premium.routes.js');
 const passwordRoutes = require('./routes/password.routes.js');
 
 
+// app.use(premiumUsersRoutes);
 
 //routes to purchase premium membership
 const purchaseRoutes = require('./routes/purchase.routes.js');
@@ -80,5 +87,6 @@ sequelize.sync().then((result)=>{
     })
 })
 .catch((err)=>{
-    console.log('could not start server. There may be an error occured.');
+    console.log(err);
+    // console.log('could not start server. There may be an error occured.');
 });

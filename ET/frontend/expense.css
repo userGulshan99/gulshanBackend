@@ -7,6 +7,7 @@ body{
     padding: 20px;
     display: block;
     font-weight: bold;
+    background-color: #c0c0c0;
 }
 
 form{
@@ -46,4 +47,42 @@ ul{
     color: white;
     border: none;
     outline: none;
+}
+
+#leaderboardBtn{
+    display: none;
+    justify-content: center;
+}
+
+#premiumBtns{
+    background: none;
+}
+
+#premiumBtns ul{
+    margin-top: 2%;
+    list-style-type: upper-roman;
+}
+
+#premiumBtns ul li{
+    margin: 5% 0%;
+}
+
+#expenseList{
+    display: flex;
+    justify-content: center;
+}
+
+#expenses{
+    display: block;
+    position: absolute;
+    justify-content: center;
+    left: 5%;
+}
+
+#leaderboardList{
+    display: block;
+    position: absolute;
+    line-height: inherit;
+    margin-top: 2%;
+    right: 20%;
 }

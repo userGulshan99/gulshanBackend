@@ -4,6 +4,9 @@ const {User} = require('../models/user.models');
 const {Expense} = require('../models/expense.models');
 const { where, Op, Sequelize } = require('sequelize');
 const sequelize = require('../utils/database');
+const { getAllExpensesOfUser } = require('../services/databaseservices/expense.services');
+const {uploadToS3} = require('../services/aws.services.js');
+const { saveDownloadedFileUrl , getDownloadedFileUrlList} = require('../services/databaseservices/url.services.js');
 
 // middleware to check premium membership
 
@@ -26,12 +29,16 @@ const checkPremiumUser = (req, res, next)=>{
 
 const userExpenses = async (req, res, next) =>{
     try {
+      
         const users = await User.findAll({
-            attributes : ['id','name', 'totalexpenseamount']
-          });
-    
+            attributes : ['id','name', 'totalexpenseamount'],
+            limit: 5,
+            order : [['totalexpenseamount', 'DESC']]
+        });
+
         return res.status(200).json(users);
     } catch (error) {
+        console.log(error);
         return res.status(500).json({'Error' : 'Could not get data at this moment'});
     }
 }
@@ -68,8 +75,36 @@ const getExpensesReport = async (req, res, next) =>{
     }
 }
 
+const downloadExpenses   = async (req, res, next) =>{
+    try {
+        const expenses = await getAllExpensesOfUser(req.user.id);
+        const stringifiedExpenses = JSON.stringify(expenses);
+
+        const fileName = `Expenses${req.user.id}/${new Date()}.txt`;
+
+        const fileUrl = await uploadToS3(stringifiedExpenses, fileName);
+        
+        await saveDownloadedFileUrl(fileUrl, req.user.id);
+        
+        return res.status(200).json({fileUrl, success : true});
+    } catch (error) {
+        return res.status(500).json({'Error' : 'Unable to download expenses'});
+    }
+}
+
+const getDownloadedFilesList = async (req, res, next) =>{
+    try {
+        const list = await getDownloadedFileUrlList(req.user.id);
+        return res.status(200).json({'urlList' : list}); 
+    } catch (error) {
+        return res.status(500).json({'Error' : 'Unable to get urls, please try again'});
+    }
+}
+
 module.exports = {
     checkPremiumUser,
     userExpenses,
-    getExpensesReport
+    getExpensesReport,
+    downloadExpenses,
+    getDownloadedFilesList
 };
